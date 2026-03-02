@@ -94,6 +94,7 @@ export default function App() {
             {
               address: '0QC3Lmr6hoiv9v7HhTzccUxJ7Hhl1W4L0lXVTR1i0uMjmo16',
               amount: amountNano.toString(),
+              comment: 'hey bro',
             },
           ],
         });
