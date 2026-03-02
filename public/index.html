@@ -89,9 +89,17 @@
       btn.onclick = async () => {
         try {
           btn.disabled = true;
-          addrEl.innerText = 'Opening wallet popup...';
+          addrEl.innerText = 'Button clicked. Trying to open wallet popup...';
 
-          await tonConnectUI.openModal(); // εδώ εμφανίζεται το popup
+          // Έλεγχος ότι η βιβλιοθήκη φορτώθηκε σωστά
+          if (!tonConnectUI || typeof tonConnectUI.openModal !== 'function') {
+            addrEl.innerText = 'TonConnect UI ΔΕΝ φορτώθηκε (tonConnectUI undefined).';
+            console.error('TonConnectUI is not available', { tonConnectUI, windowObj: window.TonConnectUI });
+            return;
+          }
+
+          await tonConnectUI.openModal(); // εδώ θα πρέπει να εμφανιστεί το popup
+          addrEl.innerText = 'openModal() κλήθηκε. Αν δεν βλέπεις popup, φταίει το περιβάλλον (Telegram/webview).';
         } catch (e) {
           console.error(e);
           addrEl.innerText = 'Η σύνδεση ακυρώθηκε ή απέτυχε.';
