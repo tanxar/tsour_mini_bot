@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 
 export default function App() {
   const [tonConnectUI] = useTonConnectUI();
+  const wallet = useTonWallet();
   const [status, setStatus] = useState('Πάτα το κουμπί για TON Connect.');
 
   useEffect(() => {
@@ -10,12 +11,29 @@ export default function App() {
     window.Telegram?.WebApp?.expand();
   }, []);
 
+  useEffect(() => {
+    if (wallet?.account?.address) {
+      setStatus(`Connected: ${wallet.account.address}`);
+    }
+  }, [wallet]);
+
+  useEffect(() => {
+    // Show connector-level errors directly in the UI.
+    return tonConnectUI.onStatusChange(
+      () => {},
+      (error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        setStatus(`TON Connect error: ${message}`);
+      }
+    );
+  }, [tonConnectUI]);
+
   const openTonConnect = async () => {
     setStatus('Το κουμπί πατήθηκε. Προσπάθεια ανοίγματος TON Connect...');
 
     try {
       await tonConnectUI.openModal();
-      setStatus('Το TON Connect popup ζητήθηκε.');
+      setStatus('Το TON Connect popup άνοιξε. Επίλεξε wallet για σύνδεση.');
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       setStatus(`Error: ${message}`);
