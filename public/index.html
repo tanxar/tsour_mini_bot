@@ -54,7 +54,8 @@
       }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@2.0.8/dist/tonconnect-ui.min.js"></script>
+    <!-- TonConnect UI από CDN, εκθέτει global window.TonConnectUI -->
+    <script src="https://unpkg.com/@tonconnect/ui@2.0.8/dist/tonconnect-ui.js"></script>
   </head>
   <body>
     <div class="card">
@@ -72,31 +73,22 @@
         tg.expand();
       }
 
-      // TonConnect UI (popup) από το CDN
-      const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      // TonConnect UI (popup) από το CDN - απλό, χωρίς modules
+      const TonConnectUI = window.TonConnectUI;
+      const tonConnectUI = new TonConnectUI({
         manifestUrl: 'https://tsour-mini-bot.vercel.app/tonconnect-manifest.json',
       });
 
       const btn = document.getElementById('letsGoBtn');
       const addrEl = document.getElementById('walletAddress');
 
-      // Όταν ο χρήστης πατάει "Let's Go!" ανοίγει το popup "Connect your TON wallet"
+      // Όταν ο χρήστης πατάει "Let's Go!" ανοίγει ΜΟΝΟ το popup "Connect your TON wallet"
       btn.onclick = async () => {
         try {
           btn.disabled = true;
           addrEl.innerText = 'Opening wallet popup...';
 
-          await tonConnectUI.openModal();
-
-          const wallet = tonConnectUI.wallet;
-          if (wallet?.account?.address) {
-            addrEl.innerText = 'Wallet Address: ' + wallet.account.address;
-            if (tg && tg.HapticFeedback) {
-              tg.HapticFeedback.impactOccurred('medium');
-            }
-          } else {
-            addrEl.innerText = 'Δεν συνδέθηκε ακόμη wallet.';
-          }
+          await tonConnectUI.openModal(); // εδώ εμφανίζεται το popup
         } catch (e) {
           console.error(e);
           addrEl.innerText = 'Η σύνδεση ακυρώθηκε ή απέτυχε.';
