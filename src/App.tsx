@@ -46,20 +46,47 @@ export default function App() {
         }
 
         const data = await res.json();
+        console.log(`TonAPI response (${isTestnet ? 'testnet' : 'mainnet'}):`, data);
+        
         // Το balance μπορεί να είναι number ή string, και μπορεί να είναι σε nested object.
+        // TonAPI v2 structure: data.balance ή data.account.balance ή data.balance.balance
         let nano = 0;
-        if (typeof data.balance === 'number') {
-          nano = data.balance;
-        } else if (typeof data.balance === 'string') {
-          nano = parseInt(data.balance, 10);
-        } else if (data.account?.balance) {
-          nano = typeof data.account.balance === 'string' 
-            ? parseInt(data.account.balance, 10) 
-            : data.account.balance;
+        
+        // Δοκιμή 1: data.balance (direct)
+        if (data.balance !== undefined && data.balance !== null) {
+          if (typeof data.balance === 'number') {
+            nano = data.balance;
+          } else if (typeof data.balance === 'string') {
+            nano = parseInt(data.balance, 10) || 0;
+          }
+        }
+        
+        // Δοκιμή 2: data.account.balance
+        if (nano === 0 && data.account?.balance !== undefined && data.account?.balance !== null) {
+          if (typeof data.account.balance === 'number') {
+            nano = data.account.balance;
+          } else if (typeof data.account.balance === 'string') {
+            nano = parseInt(data.account.balance, 10) || 0;
+          }
+        }
+        
+        // Δοκιμή 3: data.balance.balance (nested)
+        if (nano === 0 && data.balance?.balance !== undefined && data.balance?.balance !== null) {
+          if (typeof data.balance.balance === 'number') {
+            nano = data.balance.balance;
+          } else if (typeof data.balance.balance === 'string') {
+            nano = parseInt(data.balance.balance, 10) || 0;
+          }
+        }
+        
+        // Δοκιμή 4: data.balance.ton (αν είναι σε TON αντί για nanoTON)
+        if (nano === 0 && data.balance?.ton !== undefined && data.balance?.ton !== null) {
+          const tons = typeof data.balance.ton === 'number' ? data.balance.ton : parseFloat(data.balance.ton) || 0;
+          nano = Math.floor(tons * 1_000_000_000);
         }
         
         const tons = nano / 1_000_000_000;
-        console.log(`Balance fetched (${isTestnet ? 'testnet' : 'mainnet'}):`, { nano, tons, rawData: data });
+        console.log(`Balance parsed:`, { nano, tons, address });
 
         setBalance({ tons: tons.toFixed(4), nano });
       } catch (error) {
