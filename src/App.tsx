@@ -32,6 +32,13 @@ export default function App() {
     setStatus('Το κουμπί πατήθηκε. Προσπάθεια ανοίγματος TON Connect...');
 
     try {
+      // Αν υπάρχει ήδη συνδεδεμένο wallet, αποσύνδεσέ το ώστε κάθε φορά
+      // που ο χρήστης πατάει το κουμπί να ξεκινάμε από την αρχή.
+      if (wallet) {
+        await tonConnectUI.disconnect();
+        setStatus('Προηγούμενο wallet αποσυνδέθηκε. Άνοιγμα νέου TON Connect popup...');
+      }
+
       await tonConnectUI.openModal();
       setStatus('Το TON Connect popup άνοιξε. Επίλεξε wallet για σύνδεση.');
     } catch (error) {
