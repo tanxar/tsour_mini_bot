@@ -14,7 +14,8 @@ statusEl.textContent = 'Ready. You are inside Telegram Mini App.';
 // Π.χ. https://your-domain.com/tonconnect-manifest.json
 const TONCONNECT_MANIFEST_URL = `${window.location.origin}/tonconnect-manifest.json`;
 
-const tonConnectUI = new window.TonConnectUI.TonConnectUI({
+// TON_CONNECT_UI είναι το global object από το CDN script
+const tonConnectUI = new window.TON_CONNECT_UI.TonConnectUI({
   manifestUrl: TONCONNECT_MANIFEST_URL
 });
 
