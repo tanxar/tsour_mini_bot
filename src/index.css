@@ -49,15 +49,22 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.15);
 }
 
-.price-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
+.deal-price-section > .price-row {
+  display: inline-block;
+  width: calc(50% - 10px);
+  vertical-align: top;
+  margin-right: 20px;
+  margin-bottom: 0;
 }
 
-.price-row:last-of-type {
-  margin-bottom: 0;
+.deal-price-section > .price-row:last-of-type {
+  margin-right: 0;
+}
+
+.price-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .label {
@@ -69,8 +76,9 @@ body {
 .price-value {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 2px;
+  margin-top: 4px;
 }
 
 .price-down {
@@ -78,6 +86,16 @@ body {
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ton-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .price-usd {
@@ -90,8 +108,9 @@ body {
   color: #3b82f6;
   text-decoration: none;
   font-size: 13px;
-  display: inline-block;
+  display: block;
   margin-top: 12px;
+  clear: both;
 }
 
 .how-it-works-link:hover {

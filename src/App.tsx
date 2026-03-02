@@ -161,14 +161,20 @@ export default function App() {
             <div className="price-row">
               <span className="label">Deal Price</span>
               <div className="price-value">
-                <span className="price-down">▼ 5000.00</span>
+                <span className="price-down">
+                  ▼ 5000.00
+                  <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
+                </span>
                 <span className="price-usd">-$7937.17</span>
               </div>
             </div>
             <div className="price-row">
               <span className="label">Commission</span>
               <div className="price-value">
-                <span className="price-down">▼ 250.00</span>
+                <span className="price-down">
+                  ▼ 250.00
+                  <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
+                </span>
                 <span className="price-usd">-$396.86</span>
               </div>
             </div>
