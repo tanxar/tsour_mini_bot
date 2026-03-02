@@ -7,48 +7,240 @@ body {
 
 .page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
+  padding: 20px;
+  background: #020617;
 }
 
-.card {
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  padding-top: 30px;
+}
+
+/* Deal Status Badge */
+.deal-status-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #10b981;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-text {
+  color: white;
+}
+
+/* Deal Overview */
+.deal-overview {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.deal-price-section {
   background: rgba(15, 23, 42, 0.96);
-  border-radius: 18px;
-  padding: 24px 20px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
 }
 
-h1 {
-  font-size: 24px;
-  margin: 0 0 8px;
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
 }
 
-p {
-  margin: 0 0 16px;
+.price-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.label {
   color: #9ca3af;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 400;
 }
 
-button {
+.price-value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.price-down {
+  color: #ef4444;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.price-usd {
+  color: #9ca3af;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.how-it-works-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 13px;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+.how-it-works-link:hover {
+  text-decoration: underline;
+}
+
+/* Contact Information */
+.contact-info {
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.info-value {
+  color: #e5e7eb;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Start Exchange Button */
+.start-exchange-btn {
   width: 100%;
-  padding: 14px 18px;
-  border-radius: 999px;
+  padding: 14px 24px;
+  border-radius: 8px;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  background: linear-gradient(135deg, #22d3ee, #3b82f6);
-  color: #0b1120;
-  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.4);
+  background: #3b82f6;
+  color: white;
+  margin-bottom: 10px;
+  transition: background 0.2s;
 }
 
-#status {
-  margin-top: 14px;
-  word-break: break-word;
+.start-exchange-btn:hover {
+  background: #2563eb;
+}
+
+.start-exchange-btn:active {
+  background: #1d4ed8;
+}
+
+/* Subscribe Link */
+.subscribe-link {
+  display: block;
+  text-align: center;
+  color: #3b82f6;
+  text-decoration: none;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.subscribe-link:hover {
+  text-decoration: underline;
+}
+
+/* KYC Box */
+.kyc-box {
+  background: #1e40af;
+  color: white;
+  padding: 14px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Deal Status Table */
+.deal-table {
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  overflow-x: auto;
+}
+
+.deal-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.deal-table thead {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.deal-table th {
+  text-align: left;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 8px 12px 8px 0;
+  text-transform: uppercase;
+}
+
+.deal-table td {
+  padding: 10px 12px 10px 0;
+  color: #e5e7eb;
+  font-size: 13px;
+}
+
+.deal-table tr:last-child td {
+  border-bottom: none;
+}
+
+.address-cell {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* Smart Contract Fee Details */
+.fee-details {
+  background: rgba(15, 23, 42, 0.96);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.fee-title {
+  color: #e5e7eb;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+.fee-text {
+  color: #9ca3af;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
 }

