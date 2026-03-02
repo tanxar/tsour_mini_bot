@@ -5,6 +5,7 @@ export default function App() {
   const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
   const [status, setStatus] = useState('Πάτα το κουμπί για TON Connect.');
+  const [balance, setBalance] = useState<string | null>(null);
 
   useEffect(() => {
     window.Telegram?.WebApp?.ready();
@@ -15,6 +16,38 @@ export default function App() {
     if (wallet?.account?.address) {
       setStatus(`Connected: ${wallet.account.address}`);
     }
+  }, [wallet]);
+
+  // Κάθε φορά που αλλάζει το συνδεδεμένο wallet, φέρνουμε το balance του.
+  useEffect(() => {
+    const address = wallet?.account?.address;
+
+    if (!address) {
+      setBalance(null);
+      return;
+    }
+
+    const fetchBalance = async () => {
+      try {
+        // Χρησιμοποιούμε public TonAPI endpoint για να πάρουμε το balance σε nanoTON.
+        const res = await fetch(`https://tonapi.io/v2/accounts/${address}`);
+        if (!res.ok) {
+          throw new Error(`TonAPI error: ${res.status}`);
+        }
+
+        const data: { balance?: number } = await res.json();
+        const nano = data.balance ?? 0;
+        const tons = nano / 1_000_000_000;
+
+        setBalance(tons.toFixed(4));
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error('Error fetching TON balance:', message);
+        setBalance(null);
+      }
+    };
+
+    fetchBalance();
   }, [wallet]);
 
   useEffect(() => {
@@ -56,6 +89,9 @@ export default function App() {
           🔗 Σύνδεση TON Wallet
         </button>
         <p id="status">{status}</p>
+        {wallet?.account?.address && balance !== null && (
+          <p>Balance: {balance} TON</p>
+        )}
       </section>
     </main>
   );
