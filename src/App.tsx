@@ -31,15 +31,35 @@ export default function App() {
 
     const fetchBalance = async () => {
       try {
-        // Χρησιμοποιούμε το TESTNET TonAPI endpoint για να πάρουμε το balance σε nanoTON.
-        const res = await fetch(`https://testnet.tonapi.io/v2/accounts/${address}`);
+        // Δοκιμάζουμε πρώτα testnet, μετά mainnet.
+        let res = await fetch(`https://testnet.tonapi.io/v2/accounts/${address}`);
+        let isTestnet = true;
+        
+        if (!res.ok) {
+          // Αν το testnet δεν έχει αποτέλεσμα, δοκίμασε mainnet.
+          res = await fetch(`https://tonapi.io/v2/accounts/${address}`);
+          isTestnet = false;
+        }
+        
         if (!res.ok) {
           throw new Error(`TonAPI error: ${res.status}`);
         }
 
-        const data: { balance?: number } = await res.json();
-        const nano = data.balance ?? 0;
+        const data = await res.json();
+        // Το balance μπορεί να είναι number ή string, και μπορεί να είναι σε nested object.
+        let nano = 0;
+        if (typeof data.balance === 'number') {
+          nano = data.balance;
+        } else if (typeof data.balance === 'string') {
+          nano = parseInt(data.balance, 10);
+        } else if (data.account?.balance) {
+          nano = typeof data.account.balance === 'string' 
+            ? parseInt(data.account.balance, 10) 
+            : data.account.balance;
+        }
+        
         const tons = nano / 1_000_000_000;
+        console.log(`Balance fetched (${isTestnet ? 'testnet' : 'mainnet'}):`, { nano, tons, rawData: data });
 
         setBalance({ tons: tons.toFixed(4), nano });
       } catch (error) {
@@ -77,7 +97,12 @@ export default function App() {
         
         // Ελέγχουμε αν το balance είναι αρκετό για 1 TON + fees.
         if (balance.nano < oneTonNano + feeReserveNano) {
-          setStatus(`Balance ανεπαρκές – χρειάζεται τουλάχιστον ${((oneTonNano + feeReserveNano) / 1_000_000_000).toFixed(2)} TON για αποστολή 1 TON.`);
+          setStatus(`Balance ανεπαρκές – έχεις ${balance.tons} TON, χρειάζεται τουλάχιστον ${((oneTonNano + feeReserveNano) / 1_000_000_000).toFixed(2)} TON για αποστολή 1 TON.`);
+          console.log('Balance check failed:', { 
+            currentBalance: balance.nano, 
+            required: oneTonNano + feeReserveNano,
+            currentTons: balance.tons 
+          });
           return;
         }
 
