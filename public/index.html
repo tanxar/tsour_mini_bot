@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <title>TON Mini App</title>
+    <title>My TON Mini App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
@@ -23,6 +23,7 @@
         max-width: 420px;
         box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
         border: 1px solid rgba(148, 163, 184, 0.2);
+        text-align: center;
       }
       h1 {
         font-size: 22px;
@@ -45,39 +46,63 @@
         color: #0b1120;
         box-shadow: 0 12px 30px rgba(56, 189, 248, 0.4);
       }
-      button:disabled {
-        opacity: 0.5;
-        cursor: default;
-        box-shadow: none;
-      }
-      .address {
+      #walletAddress {
         margin-top: 14px;
         word-break: break-all;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
         font-size: 13px;
-        padding: 10px 12px;
-        border-radius: 10px;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.25);
-      }
-      .status {
-        font-size: 12px;
-        color: #9ca3af;
-        margin-top: 8px;
       }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@2.0.8/dist/tonconnect-ui.min.js"></script>
-    <script src="./main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk/dist/tonconnect.min.js"></script>
   </head>
   <body>
     <div class="card">
-      <h1>TON Mini App</h1>
-      <p>Πάτα το κουμπί για να συνδεθείς με Tonkeeper και να δεις το public wallet address σου.</p>
-      <button id="connect-btn">Let's go</button>
-      <div id="address" class="address" style="display:none;"></div>
-      <div id="status" class="status"></div>
+      <h1>My Mini App</h1>
+      <p>Πάτα το κουμπί για να συνδεθείς με Tonkeeper και να δεις το wallet address σου.</p>
+      <button id="letsGoBtn">Let's Go!</button>
+      <p id="walletAddress">Wallet Address: Not connected</p>
     </div>
+
+    <script>
+      // Telegram WebApp integration
+      const tg = window.Telegram && window.Telegram.WebApp;
+      if (tg) {
+        tg.ready();
+        tg.expand();
+      }
+
+      // TonConnect SDK από το CDN
+      const { TonConnect } = window.TonConnectSDK;
+      const tonConnect = new TonConnect({ bridgeUrl: 'https://bridge.tonapi.io' });
+
+      const btn = document.getElementById('letsGoBtn');
+      const addrEl = document.getElementById('walletAddress');
+
+      btn.onclick = async () => {
+        try {
+          btn.disabled = true;
+          addrEl.innerText = 'Connecting...';
+
+          await tonConnect.connect();
+
+          const address = tonConnect.account?.address;
+          if (address) {
+            addrEl.innerText = 'Wallet Address: ' + address;
+            if (tg && tg.HapticFeedback) {
+              tg.HapticFeedback.impactOccurred('medium');
+            }
+          } else {
+            addrEl.innerText = 'Connected αλλά δεν βρέθηκε διεύθυνση.';
+          }
+        } catch (e) {
+          console.error(e);
+          addrEl.innerText = 'Η σύνδεση ακυρώθηκε ή απέτυχε.';
+        } finally {
+          btn.disabled = false;
+        }
+      };
+    </script>
   </body>
 </html>
 
