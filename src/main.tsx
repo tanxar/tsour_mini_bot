@@ -4,14 +4,15 @@ import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import App from './App';
 import './index.css';
 
-const twaReturnUrl = window.location.href;
+const manifestUrl = new URL('/tonconnect-manifest.json', window.location.origin).toString();
+const twaReturnUrl = 'https://t.me/tanxar_bot';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <TonConnectUIProvider
-      manifestUrl="https://tsour-mini-bot.vercel.app/tonconnect-manifest.json"
+      manifestUrl={manifestUrl}
       actionsConfiguration={{
-        // Return to the current mini app URL after wallet interaction.
+        // Return through Telegram bot after wallet interaction.
         twaReturnUrl,
       }}
       enableAndroidBackHandler={false}
