@@ -116,7 +116,6 @@ export default function App() {
             {
               address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
               amount: oneTonNano.toString(),
-              comment: 'hey bro',
             },
           ],
         });
