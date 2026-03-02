@@ -1,5 +1,3 @@
-import { TonConnectUI } from "https://unpkg.com/@tonconnect/ui@2.0.8/dist/tonconnect-ui.min.js";
-
 const tg = window.Telegram?.WebApp;
 if (tg) {
   tg.ready();
@@ -16,7 +14,7 @@ statusEl.textContent = 'Ready. You are inside Telegram Mini App.';
 // Π.χ. https://your-domain.com/tonconnect-manifest.json
 const TONCONNECT_MANIFEST_URL = `${window.location.origin}/tonconnect-manifest.json`;
 
-const tonConnectUI = new TonConnectUI({
+const tonConnectUI = new window.TonConnectUI.TonConnectUI({
   manifestUrl: TONCONNECT_MANIFEST_URL
 });
 
@@ -40,8 +38,8 @@ connectBtn.addEventListener('click', async () => {
       statusEl.textContent = 'Connected αλλά δεν βρέθηκε διεύθυνση.';
     }
   } catch (err) {
-    console.error(err);
-    statusEl.textContent = 'Η σύνδεση ακυρώθηκε ή απέτυχε.';
+    console.error('TonConnect error', err);
+    statusEl.textContent = 'Η σύνδεση ακυρώθηκε ή απέτυχε. Άνοιξε από κινητό με εγκατεστημένο Tonkeeper.';
   } finally {
     connectBtn.disabled = false;
   }

@@ -1,8 +1,8 @@
 {
-  "url": "https://your-domain.com",
+  "url": "https://tsour-mini-bot.vercel.app",
   "name": "Tsour TON Mini App",
-  "iconUrl": "https://your-domain.com/icon.png",
-  "termsOfUseUrl": "https://your-domain.com/terms",
-  "privacyPolicyUrl": "https://your-domain.com/privacy"
+  "iconUrl": "https://tsour-mini-bot.vercel.app/icon.png",
+  "termsOfUseUrl": "https://tsour-mini-bot.vercel.app/terms",
+  "privacyPolicyUrl": "https://tsour-mini-bot.vercel.app/privacy"
 }
 
