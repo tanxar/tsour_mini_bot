@@ -19,7 +19,7 @@ export default function App() {
     }
   }, [wallet]);
 
-  // Κάθε φορά που αλλάζει το συνδεδεμένο wallet, φέρνουμε το balance του.
+  // Κάθε φορά που αλλάζει το συνδεδεμένο wallet, φέρνουμε το balance του από mainnet.
   useEffect(() => {
     const address = wallet?.account?.address;
 
@@ -31,28 +31,22 @@ export default function App() {
 
     const fetchBalance = async () => {
       try {
-        // Δοκιμάζουμε πρώτα testnet, μετά mainnet.
-        let res = await fetch(`https://testnet.tonapi.io/v2/accounts/${address}`);
-        let isTestnet = true;
+        setStatus('Φόρτωση balance...');
         
-        if (!res.ok) {
-          // Αν το testnet δεν έχει αποτέλεσμα, δοκίμασε mainnet.
-          res = await fetch(`https://tonapi.io/v2/accounts/${address}`);
-          isTestnet = false;
-        }
+        // Χρησιμοποιούμε μόνο mainnet TonAPI v2
+        const res = await fetch(`https://tonapi.io/v2/accounts/${address}`);
         
         if (!res.ok) {
           throw new Error(`TonAPI error: ${res.status}`);
         }
 
         const data = await res.json();
-        console.log(`TonAPI response (${isTestnet ? 'testnet' : 'mainnet'}):`, data);
+        console.log('TonAPI v2 response:', data);
         
-        // Το balance μπορεί να είναι number ή string, και μπορεί να είναι σε nested object.
-        // TonAPI v2 structure: data.balance ή data.account.balance ή data.balance.balance
+        // Το balance στο TonAPI v2 είναι πάντα σε nanoTON
+        // Μπορεί να είναι number ή string
         let nano = 0;
         
-        // Δοκιμή 1: data.balance (direct)
         if (data.balance !== undefined && data.balance !== null) {
           if (typeof data.balance === 'number') {
             nano = data.balance;
@@ -61,38 +55,16 @@ export default function App() {
           }
         }
         
-        // Δοκιμή 2: data.account.balance
-        if (nano === 0 && data.account?.balance !== undefined && data.account?.balance !== null) {
-          if (typeof data.account.balance === 'number') {
-            nano = data.account.balance;
-          } else if (typeof data.account.balance === 'string') {
-            nano = parseInt(data.account.balance, 10) || 0;
-          }
-        }
-        
-        // Δοκιμή 3: data.balance.balance (nested)
-        if (nano === 0 && data.balance?.balance !== undefined && data.balance?.balance !== null) {
-          if (typeof data.balance.balance === 'number') {
-            nano = data.balance.balance;
-          } else if (typeof data.balance.balance === 'string') {
-            nano = parseInt(data.balance.balance, 10) || 0;
-          }
-        }
-        
-        // Δοκιμή 4: data.balance.ton (αν είναι σε TON αντί για nanoTON)
-        if (nano === 0 && data.balance?.ton !== undefined && data.balance?.ton !== null) {
-          const tons = typeof data.balance.ton === 'number' ? data.balance.ton : parseFloat(data.balance.ton) || 0;
-          nano = Math.floor(tons * 1_000_000_000);
-        }
-        
         const tons = nano / 1_000_000_000;
-        console.log(`Balance parsed:`, { nano, tons, address });
+        console.log('Balance parsed:', { address, nano, tons });
 
         setBalance({ tons: tons.toFixed(4), nano });
+        setStatus(`Connected: ${address.substring(0, 6)}...${address.substring(address.length - 4)}`);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error('Error fetching TON balance:', message);
+        console.error('Error fetching TON balance:', message, error);
         setBalance(null);
+        setStatus(`Σφάλμα κατά την ανάγνωση balance: ${message}`);
       }
     };
 
