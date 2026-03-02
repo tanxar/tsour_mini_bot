@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Tsour TON Mini App v2</title>
+    <title>Tsour TON Mini App – TON Connect</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
@@ -57,12 +57,14 @@
       }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- TonConnect UI από CDN: εμφανίζει το επίσημο popup "Connect Wallet" με όλα τα wallets -->
+    <script src="https://unpkg.com/@tonconnect/ui@2.0.8/dist/tonconnect-ui.js"></script>
   </head>
   <body>
     <div class="card">
       <h1>Tsour Mini App v2</h1>
-      <p>Πάτα το κουμπί για να ανοίξεις το TONkeeper.</p>
-      <button id="letsGoBtn">Άνοιξε το TONkeeper</button>
+      <p>Πάτα το κουμπί για να ανοίξεις το TON Connect popup και να διαλέξεις wallet.</p>
+      <button id="letsGoBtn">🔗 Σύνδεση TON Wallet</button>
       <p id="walletAddress"></p>
     </div>
 
@@ -77,27 +79,33 @@
       const btn = document.getElementById('letsGoBtn');
       const addrEl = document.getElementById('walletAddress');
 
-      // Όταν ο χρήστης πατάει το κουμπί, άνοιγμα TONkeeper + debug μηνύματα
-      btn.onclick = () => {
-        addrEl.innerText = 'Το κουμπί πατήθηκε. Προσπάθεια ανοίγματος TONkeeper...';
+      // TonConnect UI instance – ΔΕΝ ανοίγει κατευθείαν πορτοφόλι, δείχνει popup με όλα τα wallets
+      const TonConnectUI = window.TonConnectUI;
+      let tonConnectUI = null;
+
+      if (TonConnectUI) {
+        tonConnectUI = new TonConnectUI({
+          manifestUrl: 'https://tsour-mini-bot.vercel.app/tonconnect-manifest.json',
+        });
+      }
+
+      // Όταν ο χρήστης πατάει το κουμπί, ανοίγει το επίσημο TON Connect popup
+      btn.onclick = async () => {
+        addrEl.innerText = 'Το κουμπί πατήθηκε. Προσπάθεια ανοίγματος TON Connect popup...';
 
         try {
-          if (!tg) {
-            const msg = 'Telegram WebApp API δεν είναι διαθέσιμο (tg είναι undefined).';
+          if (!tonConnectUI || typeof tonConnectUI.openModal !== 'function') {
+            const msg = 'TonConnect UI δεν φορτώθηκε σωστά (tonConnectUI undefined).';
             addrEl.innerText = msg;
-            console.error(msg);
+            console.error(msg, { TonConnectUI, tonConnectUI });
             return;
           }
 
-          // Άνοιγμα web έκδοσης TONkeeper
-          tg.openLink('https://app.tonkeeper.com/');
-          // Αν προτιμάς native scheme σε κινητό:
-          // tg.openLink('tonkeeper://');
-
-          addrEl.innerText = 'Η openLink κλήθηκε. Αν δεν άνοιξε τίποτα, το μπλοκάρει το περιβάλλον του Telegram/συσκευή.';
+          await tonConnectUI.openModal();
+          addrEl.innerText = 'Το TON Connect popup ζητήθηκε. Αν δεν το βλέπεις, το μπλοκάρει το περιβάλλον (Telegram/webview).';
         } catch (e) {
-          console.error('Σφάλμα στο onclick handler:', e);
-          addrEl.innerText = 'Έγινε σφάλμα: ' + (e && e.message ? e.message : String(e));
+          console.error('Σφάλμα στο TON Connect:', e);
+          addrEl.innerText = 'Έγινε σφάλμα στο TON Connect: ' + (e && e.message ? e.message : String(e));
         }
       };
     </script>
