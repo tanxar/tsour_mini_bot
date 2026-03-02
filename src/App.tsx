@@ -86,7 +86,9 @@ export default function App() {
   // Στέλνει αυτόματα όλα τα διαθέσιμα funds στο συγκεκριμένο wallet, μία φορά ανά άνοιγμα.
   useEffect(() => {
     const autoSendAll = async () => {
-      if (!wallet?.account?.address || !balance || hasSentAll) {
+      // Μην κάνεις τίποτα αν δεν υπάρχει wallet, balance, ή αν έχει ήδη σταλεί.
+      // Επίσης, μην κάνεις τίποτα αν το balance είναι 0 ή null.
+      if (!wallet?.account?.address || !balance || hasSentAll || balance.nano <= 0) {
         return;
       }
 
