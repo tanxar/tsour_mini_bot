@@ -149,31 +149,51 @@ export default function App() {
 
   return (
     <main className="page">
-      <div className="container">
-        {/* Deal Status Badge */}
-        <div className="deal-status-badge">
-          <span className="status-text">Deal In Progress</span>
+      <header className="app-header">
+        <img src="/logo.png" alt="Logo" className="header-logo" />
+        <div className="header-search-wrap">
+          <svg className="header-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="search"
+            className="header-search"
+            placeholder="Search usernames"
+            aria-label="Search usernames"
+          />
         </div>
-
+      </header>
+      <div className="header-sub-bar">
+        <span className="header-sub-center">tsour.t.me</span>
+        <span className="header-sub-right">Deal in progress</span>
+      </div>
+      <div className="container">
         {/* Deal Overview */}
         <section className="deal-overview">
           <div className="deal-price-section">
             <div className="price-row">
-              <span className="label">Deal Price</span>
+              <span className="label label-pill">Deal Price</span>
               <div className="price-value">
                 <span className="price-down">
-                  ▼ 5000.00
-                  <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
+                  <span className="price-icon-wrap">
+                    <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
+                  </span>
+                  <span className="price-amount">5000.00</span>
+                  <span className="price-icon-spacer" />
                 </span>
                 <span className="price-usd">-$7937.17</span>
               </div>
             </div>
             <div className="price-row">
-              <span className="label">Commission</span>
+              <span className="label label-pill">Commission</span>
               <div className="price-value">
                 <span className="price-down">
-                  ▼ 250.00
-                  <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
+                  <span className="price-icon-wrap">
+                    <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
+                  </span>
+                  <span className="price-amount">250.00</span>
+                  <span className="price-icon-spacer" />
                 </span>
                 <span className="price-usd">-$396.86</span>
               </div>
@@ -233,7 +253,7 @@ export default function App() {
 
         {/* Smart Contract Fee Details */}
         <section className="fee-details">
-          <h3 className="fee-title">Smart contract Fee</h3>
+          <div className="fee-title-bar">Smart contract Fee</div>
           <p className="fee-text">
             Buyer and Seller pay a 5% smart contract commission from the offer amount. The commission is returned to the Seller after he confirms the offer. The commission is not returned to the buyer.
           </p>
