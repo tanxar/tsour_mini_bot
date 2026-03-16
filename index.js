@@ -26,7 +26,14 @@ app.get('/health', (_req, res) => {
 // Telegram commands
 bot.start((ctx) => {
   const username = ctx.from?.username || ctx.from?.first_name || 'there';
-  return ctx.reply(`Hi ${username}`, {
+  const message =
+    `Hi ${username} 👋\n\n` +
+    `Καλωσήρθες στο Tsour Mini Bot!\n` +
+    `Με αυτό το mini app μπορείς να βλέπεις τις προσφορές σου, τις κινήσεις σου και να κάνεις γρήγορες ενέργειες απευθείας μέσα από το Telegram.\n\n` +
+    `➤ Πάτα το κουμπί από κάτω για να ανοίξεις το mini app.\n` +
+    `➤ Μπορείς να επιστρέφεις όποτε θέλεις στέλνοντας /start ξανά.`;
+
+  return ctx.reply(message, {
     reply_markup: {
       inline_keyboard: [
         [
