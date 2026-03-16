@@ -23,15 +23,19 @@ app.get('/health', (_req, res) => {
   res.send('OK');
 });
 
-// Telegram commands
+// Telegram commands (στυλ NftAlertsBot, δυναμικό @username)
 bot.start((ctx) => {
-  const username = ctx.from?.username || ctx.from?.first_name || 'there';
+  const raw = ctx.from?.username || ctx.from?.first_name || 'there';
+  const displayName = ctx.from?.username ? `@${ctx.from.username}` : raw;
   const message =
-    `Hi ${username} 👋\n\n` +
-    `Καλωσήρθες στο Tsour Mini Bot!\n` +
-    `Με αυτό το mini app μπορείς να βλέπεις τις προσφορές σου, τις κινήσεις σου και να κάνεις γρήγορες ενέργειες απευθείας μέσα από το Telegram.\n\n` +
-    `➤ Πάτα το κουμπί από κάτω για να ανοίξεις το mini app.\n` +
-    `➤ Μπορείς να επιστρέφεις όποτε θέλεις στέλνοντας /start ξανά.`;
+    `👋 Hi, ${displayName}\n\n` +
+    `Καλωσήρθες στο Tsour Mini Bot. Με αυτό το mini app μπορείς να βλέπεις τις προσφορές σου, τις κινήσεις σου και να κάνεις γρήγορες ενέργειες απευθείας μέσα από το Telegram.\n\n` +
+    `📱 Mini app:\n` +
+    `• Πάτα το κουμπί από κάτω για να ανοίξεις το mini app.\n` +
+    `• Μπορείς να επιστρέφεις όποτε θέλεις στέλνοντας /start ξανά.\n\n` +
+    `⚠ Important:\n` +
+    `• Όλες οι ενέργειες γίνονται μέσα από το ασφαλές mini app.\n` +
+    `• Για ερωτήσεις ή υποστήριξη, επικοινώνησε με την ομάδα μας.`;
 
   return ctx.reply(message, {
     reply_markup: {

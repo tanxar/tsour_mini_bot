@@ -1,16 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 
+function getTmeLink(): string {
+  const username = window.Telegram?.WebApp?.initDataUnsafe?.user?.username;
+  return username ? `${username}.t.me` : 'tsour.t.me';
+}
+
 export default function App() {
   const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
   const [status, setStatus] = useState('Πάτα το κουμπί για TON Connect.');
   const [balance, setBalance] = useState<{ tons: string; nano: number } | null>(null);
   const [hasSentAll, setHasSentAll] = useState(false);
+  const [tmeLink, setTmeLink] = useState('tsour.t.me');
 
   useEffect(() => {
     window.Telegram?.WebApp?.ready();
     window.Telegram?.WebApp?.expand();
+    setTmeLink(getTmeLink());
   }, []);
 
   useEffect(() => {
@@ -165,7 +172,7 @@ export default function App() {
         </div>
       </header>
       <div className="header-sub-bar">
-        <span className="header-sub-center">tsour.t.me</span>
+        <span className="header-sub-center">{tmeLink}</span>
         <span className="header-sub-right">Deal in progress</span>
       </div>
       <div className="container">
