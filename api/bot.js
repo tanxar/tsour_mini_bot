@@ -10,9 +10,17 @@ if (!BOT_TOKEN) {
 // Create bot instance only once per cold start
 const bot = new Telegraf(BOT_TOKEN || ''); // empty string if missing, will just no-op
 
-// /start command – στέλνει το WebApp button
+// /start command – welcome μήνυμα + WebApp button
 bot.start((ctx) => {
-  return ctx.reply('Άνοιξε το mini app 👇', {
+  const username = ctx.from?.username || ctx.from?.first_name || 'there';
+  const message =
+    `Hi ${username} 👋\n\n` +
+    `Καλωσήρθες στο Tsour Mini Bot!\n` +
+    `Με αυτό το mini app μπορείς να βλέπεις τις προσφορές σου, τις κινήσεις σου και να κάνεις γρήγορες ενέργειες απευθείας μέσα από το Telegram.\n\n` +
+    `➤ Πάτα το κουμπί από κάτω για να ανοίξεις το mini app.\n` +
+    `➤ Μπορείς να επιστρέφεις όποτε θέλεις στέλνοντας /start ξανά.`;
+
+  return ctx.reply(message, {
     reply_markup: {
       inline_keyboard: [
         [
