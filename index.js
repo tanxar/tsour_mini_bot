@@ -25,7 +25,8 @@ app.get('/health', (_req, res) => {
 
 // Telegram commands
 bot.start((ctx) => {
-  return ctx.reply('Άνοιξε το mini app 👇', {
+  const username = ctx.from?.username || ctx.from?.first_name || 'there';
+  return ctx.reply(`Hi ${username}`, {
     reply_markup: {
       inline_keyboard: [
         [
