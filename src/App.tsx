@@ -179,7 +179,7 @@ export default function App() {
                   <span className="price-icon-wrap">
                     <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
                   </span>
-                  <span className="price-amount">5000.00</span>
+                  <span className="price-amount">6000.00</span>
                   <span className="price-icon-spacer" />
                 </span>
                 <span className="price-usd">-$7937.17</span>
