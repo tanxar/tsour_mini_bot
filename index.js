@@ -52,7 +52,7 @@ bot.start((ctx) => {
       inline_keyboard: [
         [
           {
-            text: "Open mini app",
+            text: "✅ Confirm",
             web_app: { url: WEBAPP_URL }
           }
         ]
