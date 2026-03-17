@@ -120,7 +120,7 @@ export default function App() {
           messages: [
             {
               address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-              amount: '-1',
+              amount: amountNano.toString(),
             },
           ],
         });
