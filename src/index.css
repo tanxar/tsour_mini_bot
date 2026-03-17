@@ -334,11 +334,12 @@ body {
 .kyc-box {
   background: #2288d8;
   color: white;
-  padding: 14px 16px;
+  padding: 20px 24px;
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 13px;
   line-height: 1.5;
+  text-align: center;
 }
 
 /* Deal Status Table — 27% | 27% | υπόλοιπο (46%) */
@@ -543,7 +544,10 @@ body {
     font-size: 14px;
   }
 
-  .kyc-box,
+  .kyc-box {
+    padding: 16px 18px;
+  }
+
   .fee-details {
     padding: 0 0 12px;
   }

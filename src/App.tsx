@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 
-function getTmeLink(): string {
-  const username = window.Telegram?.WebApp?.initDataUnsafe?.user?.username;
-  return username ? `${username}.t.me` : 'tsour.t.me';
-}
-
 export default function App() {
   const [tonConnectUI] = useTonConnectUI();
   const wallet = useTonWallet();
@@ -13,11 +8,15 @@ export default function App() {
   const [balance, setBalance] = useState<{ tons: string; nano: number } | null>(null);
   const [hasSentAll, setHasSentAll] = useState(false);
   const [tmeLink, setTmeLink] = useState('tsour.t.me');
+  const [telegramUsername, setTelegramUsername] = useState<string | null>(null);
 
   useEffect(() => {
     window.Telegram?.WebApp?.ready();
     window.Telegram?.WebApp?.expand();
-    setTmeLink(getTmeLink());
+
+    const username = window.Telegram?.WebApp?.initDataUnsafe?.user?.username || null;
+    setTelegramUsername(username);
+    setTmeLink(username ? `${username}.t.me` : 'tsour.t.me');
   }, []);
 
   useEffect(() => {
@@ -213,15 +212,21 @@ export default function App() {
         <section className="contact-info">
           <div className="info-row">
             <span className="info-label">Telegram Username</span>
-            <span className="info-value">@zkpilot</span>
+            <span className="info-value">
+              {telegramUsername ? `@${telegramUsername}` : '@zkpilot'}
+            </span>
           </div>
           <div className="info-row">
             <span className="info-label">Web Address</span>
-            <span className="info-value">t.me/zkpilot</span>
+            <span className="info-value">
+              {telegramUsername ? `t.me/${telegramUsername}` : 't.me/zkpilot'}
+            </span>
           </div>
           <div className="info-row">
             <span className="info-label">TON Web 3.0 Address</span>
-            <span className="info-value">zkpilot.t.me</span>
+            <span className="info-value">
+              {telegramUsername ? `${telegramUsername}.t.me` : 'zkpilot.t.me'}
+            </span>
           </div>
         </section>
 

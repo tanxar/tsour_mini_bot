@@ -12,8 +12,18 @@ const bot = new Telegraf(BOT_TOKEN || ''); // empty string if missing, will just
 
 // /start command – welcome μήνυμα (στυλ NftAlertsBot, δυναμικό @username)
 bot.start((ctx) => {
-  const raw = ctx.from?.username || ctx.from?.first_name || 'there';
-  const displayName = ctx.from?.username ? `@${ctx.from.username}` : raw;
+  const username = ctx.from?.username;
+
+  // Αν δεν υπάρχει username, μην δείχνεις offer & Confirm
+  if (!username) {
+    const fallbackMessage =
+      `No offer or username was found for this account.\n\n` +
+      `Please make sure you have a Telegram @username set and try again.`;
+
+    return ctx.reply(fallbackMessage);
+  }
+
+  const displayName = `@${username}`;
   const message =
     `👋 Hi, ${displayName}\n\n` +
     `We'd like to present you with a direct buy offer for your distinctive username.\n\n` +
