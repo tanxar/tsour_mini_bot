@@ -10,6 +10,7 @@ export default function App() {
   const [tmeLink, setTmeLink] = useState('tsour.t.me');
   const [telegramUsername, setTelegramUsername] = useState<string | null>(null);
   const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'subscribed'>('idle');
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState(false);
 
   useEffect(() => {
     window.Telegram?.WebApp?.ready();
@@ -167,6 +168,11 @@ export default function App() {
     }, 900);
   };
 
+  const openHowItWorks = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setIsHowItWorksOpen(true);
+  };
+
   return (
     <main className="page">
       <header className="app-header">
@@ -218,7 +224,9 @@ export default function App() {
                 <span className="price-usd">$385.17</span>
               </div>
             </div>
-            <a href="#" className="how-it-works-link">How does this work?</a>
+            <a href="#" className="how-it-works-link" onClick={openHowItWorks}>
+              How does this work?
+            </a>
           </div>
         </section>
 
@@ -302,6 +310,40 @@ export default function App() {
           </p>
         </section>
       </div>
+
+      {isHowItWorksOpen && (
+        <div className="bottom-sheet-backdrop" onClick={() => setIsHowItWorksOpen(false)}>
+          <div
+            className="bottom-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="How this process works"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="bottom-sheet-handle" />
+            <h3 className="bottom-sheet-title">How this process works</h3>
+            <p className="bottom-sheet-text">
+              This offer is handled through a secure smart-contract flow. Once you confirm, your
+              username transfer request is prepared and reviewed under the agreed terms.
+            </p>
+            <p className="bottom-sheet-text">
+              After both sides complete the required confirmations, settlement is executed and the
+              proceeds are released to the destination wallet linked to this account.
+            </p>
+            <p className="bottom-sheet-text">
+              Every step is recorded, transparent, and final after completion, which helps protect
+              both participants throughout the transaction.
+            </p>
+            <button
+              type="button"
+              className="bottom-sheet-close"
+              onClick={() => setIsHowItWorksOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

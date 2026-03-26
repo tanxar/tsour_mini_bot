@@ -260,6 +260,74 @@ body {
   text-decoration: underline;
 }
 
+.bottom-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 20, 0.62);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.bottom-sheet {
+  width: min(680px, 100%);
+  background: #1f2731;
+  border-radius: 16px 16px 0 0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-bottom: none;
+  padding: 14px 18px 20px;
+  animation: bottom-sheet-up 0.24s ease-out;
+}
+
+.bottom-sheet-handle {
+  width: 44px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.55);
+  margin: 0 auto 12px;
+}
+
+.bottom-sheet-title {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #e5e7eb;
+}
+
+.bottom-sheet-text {
+  margin: 0 0 10px;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.bottom-sheet-close {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 14px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.bottom-sheet-close:active {
+  background: #2563eb;
+}
+
+@keyframes bottom-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 /* Contact Information */
 .contact-info {
   background: #242933;
@@ -548,6 +616,10 @@ body {
   .how-it-works-link {
     margin-top: 14px;
     padding: 0 12px;
+  }
+
+  .bottom-sheet {
+    padding: 12px 14px 16px;
   }
 
   .contact-info {
