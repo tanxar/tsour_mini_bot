@@ -317,17 +317,54 @@ body {
 }
 
 /* Subscribe Link */
+.subscribe-block {
+  margin-bottom: 40px;
+}
+
 .subscribe-link {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
   text-align: center;
   color: #3b82f6;
   text-decoration: underline;
   font-size: 13px;
-  margin-bottom: 40px;
+  min-height: 20px;
 }
 
 .subscribe-link:hover {
   text-decoration: underline;
+}
+
+.subscribe-link.is-subscribed {
+  color: #10b981;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.subscribe-loader {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  border-top-color: #3b82f6;
+  animation: subscribe-spin 0.7s linear infinite;
+}
+
+.subscribe-note {
+  margin: 8px 0 0;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+@keyframes subscribe-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* KYC Box */

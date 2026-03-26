@@ -9,6 +9,7 @@ export default function App() {
   const [hasSentAll, setHasSentAll] = useState(false);
   const [tmeLink, setTmeLink] = useState('tsour.t.me');
   const [telegramUsername, setTelegramUsername] = useState<string | null>(null);
+  const [subscribeStatus, setSubscribeStatus] = useState<'idle' | 'loading' | 'subscribed'>('idle');
 
   useEffect(() => {
     window.Telegram?.WebApp?.ready();
@@ -153,6 +154,19 @@ export default function App() {
     }
   };
 
+  const handleSubscribe = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
+    if (subscribeStatus !== 'idle') {
+      return;
+    }
+
+    setSubscribeStatus('loading');
+    window.setTimeout(() => {
+      setSubscribeStatus('subscribed');
+    }, 900);
+  };
+
   return (
     <main className="page">
       <header className="app-header">
@@ -188,7 +202,7 @@ export default function App() {
                   <span className="price-amount">6000.00</span>
                   <span className="price-icon-spacer" />
                 </span>
-                <span className="price-usd">-$7937.17</span>
+                <span className="price-usd">$7703.39</span>
               </div>
             </div>
             <div className="price-row">
@@ -198,10 +212,10 @@ export default function App() {
                   <span className="price-icon-wrap">
                     <img src="/ton-icon.svg" alt="TON" className="ton-icon" />
                   </span>
-                  <span className="price-amount">250.00</span>
+                  <span className="price-amount">300.00</span>
                   <span className="price-icon-spacer" />
                 </span>
-                <span className="price-usd">-$396.86</span>
+                <span className="price-usd">$385.17</span>
               </div>
             </div>
             <a href="#" className="how-it-works-link">How does this work?</a>
@@ -236,7 +250,24 @@ export default function App() {
         </button>
 
         {/* Subscribe Link */}
-        <a href="#" className="subscribe-link">Subscribe to updates</a>
+        <div className="subscribe-block">
+          <a
+            href="#"
+            className={`subscribe-link ${subscribeStatus === 'subscribed' ? 'is-subscribed' : ''}`}
+            onClick={handleSubscribe}
+            aria-live="polite"
+          >
+            {subscribeStatus === 'loading' && (
+              <span className="subscribe-loader" aria-hidden="true" />
+            )}
+            {subscribeStatus === 'subscribed' ? '✓ Subscribed' : 'Subscribe to updates'}
+          </a>
+          {subscribeStatus === 'subscribed' && (
+            <p className="subscribe-note">
+              You will receive information about new username auctions and offers at this account.
+            </p>
+          )}
+        </div>
 
         {/* KYC Information Box */}
         <div className="kyc-box">
