@@ -42,9 +42,9 @@ bot.start((ctx) => {
     `We'd like to present you with a direct buy offer for your distinctive username.\n\n` +
     `The transaction will be processed through the official 🔐 Fragment.com service, ensuring full security and automatic, trustless execution.\n\n` +
     `📄 Offer details:\n\n` +
-    `💰 Amount offered: 5000 TON\n` +
+    `💰 Amount offered: 6000 TON\n` +
     `🪙 Buyer fee: 5% (paid by the buyer)\n` +
-    `🪙 Seller fee: 250 TON\n\n` +
+    `🪙 Seller fee: 300 TON\n\n` +
     `⚠️ Important:\n\n` +
     `• After confirmation, ${displayName} will be issued as a collectible.\n` +
     `• The transfer is permanent and cannot be reversed.\n` +
